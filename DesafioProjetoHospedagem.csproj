@@ -1,10 +1,83 @@
-<Project Sdk="Microsoft.NET.Sdk">
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>disable</Nullable>
-  </PropertyGroup>
+namespace SistemaHospedagem
+{
+    class Pessoa
+    {
+        public string Nome { get; set; }
+        public string Sobrenome { get; set; }
+    }
 
-</Project>
+    class Suite
+    {
+        public string TipoSuite { get; set; }
+        public int Capacidade { get; set; }
+        public decimal ValorDiaria { get; set; }
+    }
+
+    class Reserva
+    {
+        public List<Pessoa> Hospedes { get; set; }
+        public Suite Suite { get; set; }
+        public int DiasReservados { get; set; }
+
+        public Reserva()
+        {
+            Hospedes = new List<Pessoa>();
+        }
+
+        public void CadastrarHospedes(List<Pessoa> hospedes)
+        {
+            if (hospedes.Count > Suite.Capacidade)
+            {
+                throw new Exception("A quantidade de hóspedes não pode exceder a capacidade da suite.");
+            }
+            Hospedes = hospedes;
+        }
+
+        public void CadastrarSuite(Suite suite)
+        {
+            Suite = suite;
+        }
+
+        public int ObterQuantidadeHospedes()
+        {
+            return Hospedes.Count;
+        }
+
+        public decimal CalcularValorDiaria()
+        {
+            decimal valorTotal = DiasReservados * Suite.ValorDiaria;
+            if (DiasReservados >= 10)
+            {
+                valorTotal *= 0.90M; // Aplicar 10% de desconto
+            }
+            return valorTotal;
+        }
+    }
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            // Exemplo de uso:
+            Suite suite = new Suite { TipoSuite = "Luxo", Capacidade = 3, ValorDiaria = 150.00M };
+            List<Pessoa> hospedes = new List<Pessoa>
+            {
+                new Pessoa { Nome = "João", Sobrenome = "Silva" },
+                new Pessoa { Nome = "Maria", Sobrenome = "Santos" }
+            };
+
+            Reserva reserva = new Reserva { DiasReservados = 12 };
+            reserva.CadastrarSuite(suite);
+            reserva.CadastrarHospedes(hospedes);
+
+            Console.WriteLine($"Quantidade de hóspedes: {reserva.ObterQuantidadeHospedes()}");
+            Console.WriteLine($"Valor total da diária: {reserva.CalcularValorDiaria()}");
+
+            Console.ReadLine();
+        }
+    }
+}
